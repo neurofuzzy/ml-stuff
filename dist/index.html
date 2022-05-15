@@ -1,24 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script src="/index.38661719.js" defer=""></script>
-    <style>
-      canvas {
-        border: 4px solid gray;
-        margin: 20px;
-        background-color: #555;
-      }
-      body {
-        min-height: 800px;
-      }
-    
+
+<head>
+  <script src="/index.38661719.js" defer=""></script>
+  <style>
+    canvas {
+      border: 4px solid gray;
+      margin: 20px;
+      background-color: #555;
+    }
+
+    body {
+      min-height: 800px;
+    }
+
+    div.chunk {
+      width: 80px;
+      height: 80px;
+    }
+    div.current_chunk {
+      float: left;
+      width: 100px;
+      height: 300px;
+      margin-left: 310px;;
+    }
+
+    div#training {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+    }
+    div#outputs {
+      display: table-cell;
+      width: calc(100% - 120px);
+      max-width: 720px;
+    }
+    div.output_chunk {
+      float: left;
+      cursor: pointer;
+    }
+
+    canvas.chunk {
+      image-rendering: pixelated;
+      transform: scale(8, 8) translateX(3.5px) translateY(3.5px);
+      border: 1px solid gray;
+    }
+
+    canvas#edge_scaled_image {
+      image-rendering: pixelated;
+      transform: scale(2, 2) translateX(16px) translateY(-16px);
+      border: 2px solid gray;
+    }
+  
 </style>
-  </head>
-  <body style="background-color: #333;">
-    <div id="root">
-      <canvas id="input_image" width="256" height="256"></canvas>
-      <canvas id="blur_image" width="256" height="256"></canvas>
-      <canvas id="edge_image" width="256" height="256"></canvas>
+</head>
+
+<body style="background-color: #333;">
+  <div id="root">
+    <canvas id="input_image" width="256" height="256"></canvas>
+    <canvas id="blur_image" width="128" height="128"></canvas>
+    <canvas id="edge_image" width="128" height="128"></canvas>
+    <canvas id="edge_scaled_image" width="64" height="64"></canvas>
+  </div>
+  <div id="training">
+    <div class="chunk current_chunk">
+      <canvas id="training_image" class="chunk" width="7" height="7"></canvas>
+      <br><br>
+      <br><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<button id="skip">Skip</button>
     </div>
-  </body>
+    <div id="outputs"></div>
+</div></body>
+
 </html>

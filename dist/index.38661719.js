@@ -460,208 +460,12 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"7BQdY":[function(require,module,exports) {
 const brain = require('brain.js');
-const median = function(data, width, height, windowSize = 3) {
-    const channels = data.length / (width * height);
-    const filterWindow = [];
-    const limit = (windowSize - 1) / 2;
-    for(let i = limit * -1; i < limit + 1; i += 1)for(let j = limit * -1; j < limit + 1; j += 1)filterWindow.push([
-        i,
-        j
-    ]);
-    for(let col = limit; col < width - limit; col += 1)for(let row = limit; row < height - limit; row += 1){
-        const index = (row * width + col) * channels;
-        const arr = [];
-        for(let z = 0; z < filterWindow.length; z += 1){
-            const i = ((row + filterWindow[z][0]) * width + (col + filterWindow[z][1])) * channels;
-            const average = Math.sqrt((data[i] ** 2 + data[i + 1] ** 2 + data[i + 2] ** 2) / 3);
-            arr.push(average);
-        }
-        const sorted = arr.sort((a, b)=>a - b
-        );
-        const medianValue = sorted[Math.floor(sorted.length / 2)];
-        data[index + 0] = medianValue;
-        data[index + 1] = medianValue;
-        data[index + 2] = medianValue;
-        if (channels === 4) data[index + 3] = 255;
-    }
-    return data;
-};
-const kernel = function(width, height, centerX, centerY) {
-    this.width = width;
-    this.height = height;
-    this.centerX = centerX || Math.floor(width / 2);
-    this.centerY = centerY || Math.floor(height / 2);
-    this.weightArray = [];
-    for(var h = 0; h < height; ++h){
-        this.weightArray.push([]);
-        for(var w = 0; w < width; ++w)this.weightArray[h].push(0);
-    }
-};
-var kernelFilter = new kernel(3, 3);
-for(var y1 = 0; y1 < 3; ++y1)for(var x1 = 0; x1 < 3; ++x1)kernelFilter.weightArray[x1][y1] = -2;
-kernelFilter.weightArray[1][1] = 16;
-function applyMedianFilter(sourceId, targetId) {
-    var width = 256;
-    var height = 256;
-    var sourceCanvas = document.getElementById(sourceId);
-    var targetCanvas = document.getElementById(targetId);
-    var ctx = sourceCanvas.getContext('2d');
-    var image = ctx.getImageData(0, 0, width, height);
-    var pix = image.data;
-    var workContext = targetCanvas.getContext('2d');
-    var data = median(pix, width, height, 3);
-    let imageData = new ImageData(width, height);
-    imageData.data.set(data);
-    workContext.putImageData(imageData, 0, 0);
-}
-function processImage(sourceId, targetId) {
-    var width = 256;
-    var height = 256;
-    var sourceCanvas = document.getElementById(sourceId);
-    var targetCanvas = document.getElementById(targetId);
-    var ctx = sourceCanvas.getContext('2d');
-    var image = ctx.getImageData(0, 0, width, height);
-    var pix1 = image.data;
-    var workContext = targetCanvas.getContext('2d');
-    var workArea = workContext.getImageData(0, 0, width, height);
-    var getPix = function(x, y) {
-        x = Math.max(0, Math.min(x, width - 1));
-        y = Math.max(0, Math.min(y, height - 1));
-        var address = (y * width + x) * 4;
-        return [
-            pix1[address + 0],
-            pix1[address + 1],
-            pix1[address + 2],
-            pix1[address + 3]
-        ];
-    };
-    var getFilteredPix = function(x, y) {
-        var retVal = [
-            0,
-            0,
-            0,
-            0
-        ];
-        for(var fy = 0; fy < kernelFilter.height; ++fy)for(var fx = 0; fx < kernelFilter.width; ++fx){
-            var m = kernelFilter.weightArray[fy][fx];
-            var pix = getPix(x + fx - kernelFilter.centerX, y + fy - kernelFilter.centerY);
-            retVal[0] += pix[0] * m;
-            retVal[1] += pix[1] * m;
-            retVal[2] += pix[2] * m;
-        }
-        retVal[3] = 255;
-        return retVal;
-    };
-    for(var yPos = 0; yPos < height; ++yPos)for(var xPos = 0; xPos < width; ++xPos){
-        var modifiedPix = getFilteredPix(xPos, yPos);
-        var address = (yPos * width + xPos) * 4;
-        var lum = Math.max(modifiedPix[0], modifiedPix[1], modifiedPix[2]);
-        workArea.data[address + 0] = lum;
-        workArea.data[address + 1] = lum;
-        workArea.data[address + 2] = lum;
-        workArea.data[address + 3] = 255;
-    }
-    workContext.putImageData(workArea, 0, 0);
-}
-const fromDataURL = function(dataURL) {
-    var img = new Image();
-    img.src = dataURL;
-    if (img.width == 256 && img.height == 256) {
-        var sprite = document.getElementById("input_image");
-        sprite.width = img.width;
-        sprite.height = img.height;
-        var ctx = sprite.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        return true;
-    }
-    return false;
-};
-const addFileReader = function(elem, listener) {
-    if (elem && window.FileReader) {
-        elem.ondragover = function() {
-            elem.classList.add('dragover');
-            return false;
-        };
-        elem.ondragleave = function() {
-            elem.classList.remove('dragover');
-            return false;
-        };
-        elem.ondrop = function(e) {
-            elem.classList.remove('dragover');
-            e.stopPropagation();
-            e.preventDefault();
-            var file = e.dataTransfer.files[0];
-            var reader = new FileReader();
-            reader.onload = function(event) {
-                if (event.target && event.target.result) {
-                    if (fromDataURL(event.target.result)) {
-                        //listener("change_complete", "change_complete");
-                        applyMedianFilter("input_image", "blur_image");
-                        processImage("blur_image", "edge_image");
-                    }
-                }
-            };
-            reader.readAsDataURL(file);
-            return false;
-        };
-    }
-};
-/**
- * Return 0 or 1 for '#'
- * @param character
- * @returns {number}
- */ function integer(character) {
-    if (character === '#') return 255;
-    return 0;
-}
-/**
- * Turn the # into 1s and . into 0s. for whole string
- * @param string
- * @returns {Array}
- */ function character1(string) {
-    return string.trim().split('').map(integer);
-}
+const { addFileReader  } = require("./images.js");
+const { addOutputs , onImageDropped  } = require("./trainer.js");
 window.onload = function() {
-    addFileReader(document.body);
-    const blank = character1(".................................................");
-    const horizontalLine = character1(".....................#######.....................");
-    const cross = character1("...#......#......#...#######...#......#......#...");
-    const verticalLine = character1("...#......#......#......#......#......#......#...");
-    const topRightCorner = character1(".....................####......#......#......#...");
-    const topLeftCorner = character1("........................####...#......#......#...");
-    const bottomRightCorner = character1("...#......#......#...####........................");
-    const bottomLeftCorner = character1("...#......#......#......####.....................");
-    const topT = character1(".....................#######...#......#......#...");
-    const bottomT = character1("...#......#......#...#######.....................");
-    const leftT = character1("...#......#......#......####...#......#......#...");
-    const rightT = character1("...#......#......#...####......#......#......#...");
-    const topRightRoundedCorner = character1(".....................##.......#.......#......#...");
-    const topLeftRoundedCorner = character1("..........................##....#.....#......#...");
-    const bottomRightRoundedCorner = character1("...#......#.....#....##..........................");
-    const bottomLeftRoundedCorner = character1("...#......#.......#.......##.....................");
-    const forwardRoundedCorners = character1("...#......#.......#..##...##..#.......#......#...");
-    const backwardRoundedCorners = character1("...#......#.....#....##...##....#.....#......#...");
-    const characters = [
-        blank,
-        horizontalLine,
-        cross,
-        verticalLine,
-        topRightCorner,
-        topLeftCorner,
-        bottomRightCorner,
-        bottomLeftCorner,
-        topT,
-        bottomT,
-        leftT,
-        rightT,
-        topRightRoundedCorner,
-        topLeftRoundedCorner,
-        bottomRightRoundedCorner,
-        bottomLeftRoundedCorner,
-        forwardRoundedCorners,
-        backwardRoundedCorners, 
-    ];
-    /*
+    addOutputs();
+    addFileReader(document.body, onImageDropped);
+/*
 
   const net = new brain.NeuralNetworkGPU();
   net.train([{
@@ -695,10 +499,10 @@ window.onload = function() {
     '#.....#' +
     '#.....#'
   ), net);
-    */ console.log(result); // 'a'
+    */ //console.log(result); // 'a'
 };
 
-},{"brain.js":"5jhS8"}],"5jhS8":[function(require,module,exports) {
+},{"brain.js":"5jhS8","./images.js":"ldsqe","./trainer.js":"biLCv"}],"5jhS8":[function(require,module,exports) {
 var global1 = arguments[3];
 (function(global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('gpu.js')) : typeof define === 'function' && define.amd ? define([
@@ -27064,6 +26868,403 @@ highp float nrand(highp vec2 n) {
         107
     ])(107);
 });
+
+},{}],"ldsqe":[function(require,module,exports) {
+const median = function(data, width, height, windowSize = 3) {
+    const channels = data.length / (width * height);
+    const filterWindow = [];
+    const limit = (windowSize - 1) / 2;
+    for(let i = limit * -1; i < limit + 1; i += 1)for(let j = limit * -1; j < limit + 1; j += 1)filterWindow.push([
+        i,
+        j
+    ]);
+    for(let col = limit; col < width - limit; col += 1)for(let row = limit; row < height - limit; row += 1){
+        const index = (row * width + col) * channels;
+        const arr = [];
+        for(let z = 0; z < filterWindow.length; z += 1){
+            const i = ((row + filterWindow[z][0]) * width + (col + filterWindow[z][1])) * channels;
+            const average = Math.sqrt((data[i] ** 2 + data[i + 1] ** 2 + data[i + 2] ** 2) / 3);
+            arr.push(average);
+        }
+        const sorted = arr.sort((a, b)=>a - b
+        );
+        const medianValue = sorted[Math.floor(sorted.length / 2)];
+        data[index + 0] = medianValue;
+        data[index + 1] = medianValue;
+        data[index + 2] = medianValue;
+        if (channels === 4) data[index + 3] = 255;
+    }
+    return data;
+};
+const applyMedianFilter = function(sourceId, targetId, scale) {
+    var width = 256;
+    var height = 256;
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById(sourceId);
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById(targetId);
+    var ctx = sourceCanvas.getContext('2d');
+    var image = ctx.getImageData(0, 0, width, height);
+    var pix = image.data;
+    var workContext = targetCanvas.getContext('2d');
+    var data = median(pix, width, height, 7);
+    let imageData = new ImageData(width, height);
+    imageData.data.set(data);
+    workContext.putImageData(imageData, 0, 0);
+};
+const copyScaled = function(sourceId, targetId, scale) {
+    var width = 256;
+    var height = 256;
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById(sourceId);
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById(targetId);
+    var ctx = targetCanvas.getContext('2d');
+    ctx.drawImage(sourceCanvas, 0, 0, width, height, 0, 0, width * scale, height * scale);
+};
+const kernel = function(width, height, centerX, centerY) {
+    this.width = width;
+    this.height = height;
+    this.centerX = centerX || Math.floor(width / 2);
+    this.centerY = centerY || Math.floor(height / 2);
+    this.weightArray = [];
+    for(var h = 0; h < height; ++h){
+        this.weightArray.push([]);
+        for(var w = 0; w < width; ++w)this.weightArray[h].push(0);
+    }
+};
+var kernelFilter = new kernel(3, 3);
+for(var y1 = 0; y1 < 3; ++y1)for(var x1 = 0; x1 < 3; ++x1)kernelFilter.weightArray[x1][y1] = -2;
+kernelFilter.weightArray[1][1] = 16;
+function processImage(sourceId, targetId) {
+    var width = 256;
+    var height = 256;
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById(sourceId);
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById(targetId);
+    var ctx = sourceCanvas.getContext('2d');
+    var image = ctx.getImageData(0, 0, width, height);
+    var pix1 = image.data;
+    var workContext = targetCanvas.getContext('2d');
+    var workArea = workContext.getImageData(0, 0, width, height);
+    var getPix = function(x, y) {
+        x = Math.max(0, Math.min(x, width - 1));
+        y = Math.max(0, Math.min(y, height - 1));
+        var address = (y * width + x) * 4;
+        return [
+            pix1[address + 0],
+            pix1[address + 1],
+            pix1[address + 2],
+            pix1[address + 3]
+        ];
+    };
+    var getFilteredPix = function(x, y) {
+        var retVal = [
+            0,
+            0,
+            0,
+            0
+        ];
+        for(var fy = 0; fy < kernelFilter.height; ++fy)for(var fx = 0; fx < kernelFilter.width; ++fx){
+            var m = kernelFilter.weightArray[fy][fx];
+            var pix = getPix(x + fx - kernelFilter.centerX, y + fy - kernelFilter.centerY);
+            retVal[0] += pix[0] * m;
+            retVal[1] += pix[1] * m;
+            retVal[2] += pix[2] * m;
+        }
+        retVal[3] = 255;
+        return retVal;
+    };
+    for(var yPos = 0; yPos < height; ++yPos)for(var xPos = 0; xPos < width; ++xPos){
+        var modifiedPix = getFilteredPix(xPos, yPos);
+        var address = (yPos * width + xPos) * 4;
+        var lum = Math.max(modifiedPix[0], modifiedPix[1], modifiedPix[2]);
+        workArea.data[address + 0] = lum;
+        workArea.data[address + 1] = lum;
+        workArea.data[address + 2] = lum;
+        workArea.data[address + 3] = 255;
+    }
+    workContext.putImageData(workArea, 0, 0);
+}
+const fromDataURL = function(dataURL) {
+    var img = new Image();
+    img.src = dataURL;
+    if (img.width == 256 && img.height == 256) {
+        /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var canvas = document.getElementById("input_image");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        return true;
+    }
+    return false;
+};
+const addFileReader = function(elem, listener) {
+    if (elem && window.FileReader) {
+        elem.ondragover = function() {
+            elem.classList.add('dragover');
+            return false;
+        };
+        elem.ondragleave = function() {
+            elem.classList.remove('dragover');
+            return false;
+        };
+        elem.ondrop = function(e) {
+            elem.classList.remove('dragover');
+            e.stopPropagation();
+            e.preventDefault();
+            var file = e.dataTransfer.files[0];
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                if (event.target && event.target.result) {
+                    if (fromDataURL(event.target.result)) {
+                        applyMedianFilter("input_image", "input_image");
+                        //applyMedianFilter("input_image", "input_image");
+                        copyScaled("input_image", "blur_image", 0.5);
+                        processImage("blur_image", "edge_image");
+                        copyScaled("edge_image", "edge_scaled_image", 0.5);
+                        listener();
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+            return false;
+        };
+    }
+};
+module.exports = {
+    applyMedianFilter,
+    processImage,
+    addFileReader
+};
+
+},{}],"biLCv":[function(require,module,exports) {
+const { outputs  } = require("./outputs");
+let top = 0;
+let left = 0;
+window['_trainingData'] = [];
+let inputData;
+const addOutputs = ()=>{
+    outputs.forEach((output, idx)=>{
+        const outputElement = document.createElement("div");
+        outputElement.className = "chunk output_chunk";
+        const outputCanvas = document.createElement("canvas");
+        outputCanvas.width = 7;
+        outputCanvas.height = 7;
+        outputCanvas.className = "chunk";
+        outputElement.dataset.id = `${idx}`;
+        outputElement.appendChild(outputCanvas);
+        const container = document.getElementById("outputs");
+        const imgArray = new Uint8ClampedArray(196);
+        output.forEach((val, idx)=>{
+            imgArray[idx * 4 + 0] = val;
+            imgArray[idx * 4 + 1] = val;
+            imgArray[idx * 4 + 2] = val;
+            imgArray[idx * 4 + 3] = 255;
+        });
+        const imageData = new ImageData(7, 7);
+        imageData.data.set(imgArray);
+        const ctx1 = outputCanvas.getContext('2d');
+        ctx1.putImageData(imageData, 0, 0);
+        container.appendChild(outputElement);
+        outputElement.onclick = ()=>{
+            console.log("selected", idx);
+            window['_trainingData'].push({
+                input: inputData,
+                output: output
+            });
+            /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById("edge_scaled_image");
+            var ctx = sourceCanvas.getContext('2d');
+            ctx.drawImage(outputCanvas, left, top);
+            left += 7;
+            if (left >= 63) {
+                left = 0;
+                top += 7;
+            }
+            if (top >= 63) {
+                top = 0;
+                left = 0;
+            }
+            setInputChunk();
+        };
+    });
+};
+const setInputChunk = ()=>{
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById("edge_scaled_image");
+    /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById("training_image");
+    var ctx = targetCanvas.getContext('2d');
+    ctx.drawImage(sourceCanvas, left, top, 7, 7, 0, 0, 7, 7);
+    const imageData = ctx.getImageData(0, 0, 7, 7);
+    inputData = [];
+    imageData.data.forEach((val, idx)=>{
+        if (idx % 4 === 0) inputData.push(val);
+    });
+};
+const onImageDropped = ()=>{
+    top = 0;
+    left = 0;
+    setInputChunk();
+};
+module.exports = {
+    addOutputs,
+    onImageDropped
+};
+
+},{"./outputs":"2SCRa"}],"2SCRa":[function(require,module,exports) {
+/**
+ * Return 0 or 1 for '#'
+ * @param character
+ * @returns {number}
+ */ function integer(character) {
+    if (character === '#') return 255;
+    return 0;
+}
+/**
+ * Turn the # into 1s and . into 0s. for whole string
+ * @param string
+ * @returns {Array}
+ */ function pixelChunk(string) {
+    return string.trim().split('').map(integer);
+}
+const blank = pixelChunk(".................................................");
+const horizontalLine = pixelChunk(".....................#######.....................");
+const cross = pixelChunk("...#......#......#...#######...#......#......#...");
+const verticalLine = pixelChunk("...#......#......#......#......#......#......#...");
+const topRightCorner = pixelChunk(".....................####......#......#......#...");
+const topLeftCorner = pixelChunk("........................####...#......#......#...");
+const bottomRightCorner = pixelChunk("...#......#......#...####........................");
+const bottomLeftCorner = pixelChunk("...#......#......#......####.....................");
+const topT = pixelChunk(".....................#######...#......#......#...");
+const bottomT = pixelChunk("...#......#......#...#######.....................");
+const leftT = pixelChunk("...#......#......#......####...#......#......#...");
+const rightT = pixelChunk("...#......#......#...####......#......#......#...");
+const topRightRoundedCorner = pixelChunk(".....................##.......#.......#......#...");
+const topLeftRoundedCorner = pixelChunk("..........................##....#.....#......#...");
+const bottomRightRoundedCorner = pixelChunk("...#......#.....#....##..........................");
+const bottomLeftRoundedCorner = pixelChunk("...#......#.......#.......##.....................");
+const forwardRoundedCorners = pixelChunk("...#......#.......#..##...##..#.......#......#...");
+const backwardRoundedCorners = pixelChunk("...#......#.....#....##...##....#.....#......#...");
+const topY = pixelChunk(".....................##...##..#.#.....#......#...");
+const bottomY = pixelChunk("...#......#.....#.#..##...##.....................");
+const leftY = pixelChunk("...#......#.......#.......##....#.....#......#...");
+const rightY = pixelChunk("...#......#.....#....##.......#.......#......#...");
+const horizontalLineDouble = pixelChunk(".......#######.....................#######.......");
+const crossDouble = pixelChunk(".#...#.##...##.....................##...##.#...#.");
+const verticalLineDouble = pixelChunk(".#...#..#...#..#...#..#...#..#...#..#...#..#...#.");
+const topRightCornerDouble = pixelChunk("........######.#......#......#......#...##.#...#.");
+const topLeftCornerDouble = pixelChunk(".......######......#......#......#.##...#..#...#.");
+const bottomRightCornerDouble = pixelChunk(".#...#.##...#......#......#......#.######........");
+const bottomLeftCornerDouble = pixelChunk(".#...#..#...##.#......#......#......######.......");
+const topTDouble = pixelChunk(".......#######.....................##...##.#...#.");
+const bottomTDouble = pixelChunk(".#...#.##...##.....................#######.......");
+const leftTDouble = pixelChunk(".#...#..#...##.#......#......#......#...##.#...#.");
+const rightTDouble = pixelChunk(".#...#.##...#......#......#......#.##...#..#...#.");
+const topTDoubleSingle = pixelChunk(".......#######.....................#######...#...");
+const bottomTDoubleSingle = pixelChunk("...#...#######.....................#######.......");
+const leftTDoubleSingle = pixelChunk(".#...#..#...#..#...#..#...##.#...#..#...#..#...#.");
+const rightTDoubleSingle = pixelChunk(".#...#..#...#..#...#.##...#..#...#..#...#..#...#.");
+const topTSingleDouble = pixelChunk(".....................#######.#...#..#...#..#...#.");
+const bottomTSingleDouble = pixelChunk(".#...#..#...#..#...#.#######.....................");
+const leftTSingleDouble = pixelChunk("...#......####...#......#......#......####...#...");
+const rightTSingleDouble = pixelChunk("...#...####......#......#......#...####......#...");
+const topTSingleDoubleCross = pixelChunk("...#......#......#...#######.#...#..#...#..#...#.");
+const bottomTSingleDoubleCross = pixelChunk(".#...#..#...#..#...#.#######...#......#......#...");
+const leftTSingleDoubleCross = pixelChunk("...#......####...#...####......#......####...#...");
+const rightTSingleDoubleCross = pixelChunk("...#...####......#......####...#...####......#...");
+const crossHDoubleSingle = pixelChunk("...#...#######.....................#######...#...");
+const crossVDoubleSingle = pixelChunk(".#...#..#...#..#...#.##...##.#...#..#...#..#...#.");
+const crossHSingleDouble = pixelChunk(".#...#..#...#..#...#.#######.#...#..#...#..#...#.");
+const crossVSingleDouble = pixelChunk("...#...#######...#......#......#...#######...#...");
+const topRightCornerDoubleSingle = pixelChunk("...#....######.#.....##......#......#...##.#...#.");
+const topLeftCornerDoubleSingle = pixelChunk("...#...######......#......##.....#.##...#..#...#.");
+const bottomRightCornerDoubleSingle = pixelChunk(".#...#.##...#......#......##.....#.######....#...");
+const bottomLeftCornerDoubleSingle = pixelChunk(".#...#..#...##.#.....##......#......######...#...");
+const topRightCornerDoubleSingleH = pixelChunk("........######.#.....##......#......#...##.#...#.");
+const topLeftCornerDoubleSingleH = pixelChunk(".......######......#......##.....#.##...#..#...#.");
+const bottomRightCornerDoubleSingleH = pixelChunk(".#...#.##...#......#......##.....#.######........");
+const bottomLeftCornerDoubleSingleH = pixelChunk(".#...#..#...##.#.....##......#......######.......");
+const topRightCornerDoubleSingleV = pixelChunk("...#....######.#......#......#......#...##.#...#.");
+const topLeftCornerDoubleSingleV = pixelChunk("...#...######......#......#......#.##...#..#...#.");
+const bottomRightCornerDoubleSingleV = pixelChunk(".#...#.##...#......#......#......#.######....#...");
+const bottomLeftCornerDoubleSingleV = pixelChunk(".#...#..#...##.#......#......#......######...#...");
+const horizontalDoubleToSingle = pixelChunk(".......####......#......####...#...####..........");
+const horizontalSingleToDouble = pixelChunk("..........####...#...####......#......####.......");
+const verticalDoubleToSingle = pixelChunk(".#...#..#...#..#...#." + `.#####.` + '...#...' + '...#...' + '...#...');
+const verticalSingleToDouble = pixelChunk("...#......#......#..." + `.#####.` + '.#...#.' + '.#...#.' + '.#...#.');
+const horizontalDoubleToNone = pixelChunk(".......####......#......#......#...####..........");
+const horizontalNoneToDouble = pixelChunk("..........####...#......#......#......####.......");
+const verticalDoubleToNone = pixelChunk(".#...#..#...#..#...#." + `.#####.` + '.......' + '.......' + '.......');
+const verticalNoneToDouble = pixelChunk("....................." + `.#####.` + '.#...#.' + '.#...#.' + '.#...#.');
+const outputs = [
+    blank,
+    horizontalLine,
+    cross,
+    verticalLine,
+    topRightCorner,
+    topLeftCorner,
+    bottomRightCorner,
+    bottomLeftCorner,
+    topT,
+    bottomT,
+    leftT,
+    rightT,
+    topRightRoundedCorner,
+    topLeftRoundedCorner,
+    bottomRightRoundedCorner,
+    bottomLeftRoundedCorner,
+    forwardRoundedCorners,
+    backwardRoundedCorners,
+    topY,
+    bottomY,
+    leftY,
+    rightY,
+    horizontalLineDouble,
+    crossDouble,
+    verticalLineDouble,
+    topRightCornerDouble,
+    topLeftCornerDouble,
+    bottomRightCornerDouble,
+    bottomLeftCornerDouble,
+    topTDouble,
+    bottomTDouble,
+    leftTDouble,
+    rightTDouble,
+    topTDoubleSingle,
+    bottomTDoubleSingle,
+    leftTDoubleSingle,
+    rightTDoubleSingle,
+    topTSingleDouble,
+    bottomTSingleDouble,
+    leftTSingleDouble,
+    rightTSingleDouble,
+    topTSingleDoubleCross,
+    bottomTSingleDoubleCross,
+    leftTSingleDoubleCross,
+    rightTSingleDoubleCross,
+    crossHDoubleSingle,
+    crossVDoubleSingle,
+    crossHSingleDouble,
+    crossVSingleDouble,
+    topRightCornerDoubleSingle,
+    topLeftCornerDoubleSingle,
+    bottomRightCornerDoubleSingle,
+    bottomLeftCornerDoubleSingle,
+    topRightCornerDoubleSingleH,
+    topLeftCornerDoubleSingleH,
+    bottomRightCornerDoubleSingleH,
+    bottomLeftCornerDoubleSingleH,
+    topRightCornerDoubleSingleV,
+    topLeftCornerDoubleSingleV,
+    bottomRightCornerDoubleSingleV,
+    bottomLeftCornerDoubleSingleV,
+    horizontalDoubleToSingle,
+    horizontalSingleToDouble,
+    verticalDoubleToSingle,
+    verticalSingleToDouble,
+    horizontalDoubleToNone,
+    horizontalNoneToDouble,
+    verticalDoubleToNone,
+    verticalNoneToDouble
+];
+module.exports = {
+    pixelChunk,
+    outputs
+};
 
 },{}]},["bVMKu","7BQdY"], "7BQdY", "parcelRequirebede")
 
