@@ -198,7 +198,7 @@ const addFileReader = function (elem, listener) {
  * @returns {number}
  */
 function integer(character) {
-  if (character === '#') return 1;
+  if (character === '#') return 255;
   return 0;
 }
 
@@ -215,37 +215,210 @@ window.onload = function () {
 
   addFileReader(document.body);
 
-  const a = character(
-    '.#####.' +
-    '#.....#' +
-    '#.....#' +
-    '#######' +
-    '#.....#' +
-    '#.....#' +
-    '#.....#'
-  );
-  const b = character(
-    '######.' +
-    '#.....#' +
-    '#.....#' +
-    '######.' +
-    '#.....#' +
-    '#.....#' +
-    '######.'
-  );
-  const c = character(
-    '#######' +
-    '#......' +
-    '#......' +
-    '#......' +
-    '#......' +
-    '#......' +
-    '#######'
+  const blank = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '.......' +
+    '.......' +
+    '.......' +
+    '.......' 
   );
 
-  /**
-   * Learn the letters A through C.
-   */
+  const horizontalLine = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '#######' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const cross = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '#######' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+
+  const verticalLine = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+  
+  const topRightCorner = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '####...' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+
+  const topLeftCorner = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '...####' +
+    '...#...' +
+    '...#...' +
+    '...#...' 
+  );
+
+  const bottomRightCorner = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '####...' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const bottomLeftCorner = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...####' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const topT = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '#######' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+
+  const bottomT = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '#######' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const leftT = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '...####' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+
+  const rightT = character(
+    '...#...' +
+    '...#...' +
+    '...#...' +
+    '####...' +
+    '...#...' +
+    '...#...' +
+    '...#...'
+  );
+
+  const topRightRoundedCorner = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '##.....' +
+    '..#....' +
+    '...#...' +
+    '...#...'
+  );
+
+  const topLeftRoundedCorner = character(
+    '.......' +
+    '.......' +
+    '.......' +
+    '.....##' +
+    '....#..' +
+    '...#...' +
+    '...#...'
+  );
+
+  const bottomRightRoundedCorner = character(
+    '...#...' +
+    '...#...' +
+    '..#....' +
+    '##.....' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const bottomLeftRoundedCorner = character(
+    '...#...' +
+    '...#...' +
+    '....#..' +
+    '.....##' +
+    '.......' +
+    '.......' +
+    '.......'
+  );
+
+  const forwardRoundedCorners = character(
+    '...#...' +
+    '...#...' +
+    '....#..' +
+    '##...##' +
+    '..#....' +
+    '...#...' +
+    '...#...'
+  );
+
+  const backwardRoundedCorners = character(
+    '...#...' +
+    '...#...' +
+    '..#....' +
+    '##...##' +
+    '....#..' +
+    '...#...' +
+    '...#...'
+  );
+
+  const characters = [
+    blank,
+    horizontalLine,
+    cross,
+    verticalLine,
+    topRightCorner,
+    topLeftCorner,
+    bottomRightCorner,
+    bottomLeftCorner,
+    topT,
+    bottomT,
+    leftT,
+    rightT,
+    topRightRoundedCorner,
+    topLeftRoundedCorner,
+    bottomRightRoundedCorner,
+    bottomLeftRoundedCorner,
+    forwardRoundedCorners,
+    backwardRoundedCorners,
+  ];
+
+
+  /*
+
   const net = new brain.NeuralNetworkGPU();
   net.train([{
     input: a,
@@ -269,9 +442,6 @@ window.onload = function () {
     log: detail => console.log(detail)
   });
 
-  /**
-   * Predict the letter A, even with a pixel off.
-   */
   const result = brain.likely(character(
     '.#####.' +
     '#.....#' +
@@ -281,7 +451,7 @@ window.onload = function () {
     '#.....#' +
     '#.....#'
   ), net);
-
+    */
 
   console.log(result); // 'a'
 

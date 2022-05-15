@@ -611,7 +611,7 @@ const addFileReader = function(elem, listener) {
  * @param character
  * @returns {number}
  */ function integer(character) {
-    if (character === '#') return 1;
+    if (character === '#') return 255;
     return 0;
 }
 /**
@@ -623,38 +623,79 @@ const addFileReader = function(elem, listener) {
 }
 window.onload = function() {
     addFileReader(document.body);
-    const a = character1(".#####.#.....##.....#########.....##.....##.....#");
-    const b = character1("######.#.....##.....#######.#.....##.....#######.");
-    const c = character1("########......#......#......#......#......#######");
-    /**
-   * Learn the letters A through C.
-   */ const net = new brain.NeuralNetworkGPU();
-    net.train([
-        {
-            input: a,
-            output: {
-                a: 1
-            }
-        },
-        {
-            input: b,
-            output: {
-                b: 1
-            }
-        },
-        {
-            input: c,
-            output: {
-                c: 1
-            }
-        }
-    ], {
-        log: (detail)=>console.log(detail)
-    });
-    /**
-   * Predict the letter A, even with a pixel off.
-   */ const result = brain.likely(character1(".#####.#.....##.....####.####.....##.....##.....#"), net);
-    console.log(result); // 'a'
+    const blank = character1(".................................................");
+    const horizontalLine = character1(".....................#######.....................");
+    const cross = character1("...#......#......#...#######...#......#......#...");
+    const verticalLine = character1("...#......#......#......#......#......#......#...");
+    const topRightCorner = character1(".....................####......#......#......#...");
+    const topLeftCorner = character1("........................####...#......#......#...");
+    const bottomRightCorner = character1("...#......#......#...####........................");
+    const bottomLeftCorner = character1("...#......#......#......####.....................");
+    const topT = character1(".....................#######...#......#......#...");
+    const bottomT = character1("...#......#......#...#######.....................");
+    const leftT = character1("...#......#......#......####...#......#......#...");
+    const rightT = character1("...#......#......#...####......#......#......#...");
+    const topRightRoundedCorner = character1(".....................##.......#.......#......#...");
+    const topLeftRoundedCorner = character1("..........................##....#.....#......#...");
+    const bottomRightRoundedCorner = character1("...#......#.....#....##..........................");
+    const bottomLeftRoundedCorner = character1("...#......#.......#.......##.....................");
+    const forwardRoundedCorners = character1("...#......#.......#..##...##..#.......#......#...");
+    const backwardRoundedCorners = character1("...#......#.....#....##...##....#.....#......#...");
+    const characters = [
+        blank,
+        horizontalLine,
+        cross,
+        verticalLine,
+        topRightCorner,
+        topLeftCorner,
+        bottomRightCorner,
+        bottomLeftCorner,
+        topT,
+        bottomT,
+        leftT,
+        rightT,
+        topRightRoundedCorner,
+        topLeftRoundedCorner,
+        bottomRightRoundedCorner,
+        bottomLeftRoundedCorner,
+        forwardRoundedCorners,
+        backwardRoundedCorners, 
+    ];
+    /*
+
+  const net = new brain.NeuralNetworkGPU();
+  net.train([{
+    input: a,
+    output: {
+      a: 1
+    }
+  },
+  {
+    input: b,
+    output: {
+      b: 1
+    }
+  },
+  {
+    input: c,
+    output: {
+      c: 1
+    }
+  }
+  ], {
+    log: detail => console.log(detail)
+  });
+
+  const result = brain.likely(character(
+    '.#####.' +
+    '#.....#' +
+    '#.....#' +
+    '###.###' +
+    '#.....#' +
+    '#.....#' +
+    '#.....#'
+  ), net);
+    */ console.log(result); // 'a'
 };
 
 },{"brain.js":"5jhS8"}],"5jhS8":[function(require,module,exports) {
