@@ -3,6 +3,7 @@ const { outputs } = require("./outputs");
 
 let top = 0;
 let left = 0;
+let guess = NaN;
 
 let d = window.localStorage.getItem("trainingData");
 window['_trainingData'] = d ? JSON.parse(d) : [];
@@ -23,6 +24,42 @@ document.getElementById("skip").onclick = () => {
   setInputChunk();
 };
 
+document.getElementById("accept").onclick = () => {
+  if (isNaN(guess)) {
+    return;
+  }
+  
+  console.log("accepted", guess);
+  
+  window['_trainingData'].push({
+    input: inputData,
+    output: outputs[guess],
+  });
+
+  /** @type {HTMLCanvasElement} */
+  /* @ts-ignore */
+  var outputCanvas = document.getElementById("output" + guess);
+  /** @type {HTMLCanvasElement} */
+  /* @ts-ignore */
+  var sourceCanvas = document.getElementById("edge_scaled_image");
+  var ctx = sourceCanvas.getContext('2d');
+  ctx.drawImage(outputCanvas, left, top);
+
+  left += 7;
+  if (left >= 63) {
+    left = 0;
+    top += 7;
+  }
+  if (top >= 63) {
+    top = 0;
+    left = 0;
+  }
+
+  window.localStorage.setItem("trainingData", JSON.stringify(window['_trainingData']));
+
+  setInputChunk();
+};
+
 const container = document.getElementById("outputs");
 
 const addOutputs = () => {
@@ -34,6 +71,7 @@ const addOutputs = () => {
     const outputCanvas = document.createElement("canvas");
     outputCanvas.width = 7;
     outputCanvas.height = 7;
+    outputCanvas.id = "output" + idx;
     outputCanvas.className = "chunk";
     outputElement.dataset.id = `${idx}`;
     outputElement.appendChild(outputCanvas);
@@ -92,9 +130,10 @@ const addOutputs = () => {
 
 }
 
+const net = new brain.NeuralNetworkGPU();
+
 const guessLikely = function () {
 
-  const net = new brain.NeuralNetworkGPU();
 
   if (window["_trainingData"].length > 3) {
 
@@ -110,6 +149,7 @@ const guessLikely = function () {
     if (resultIdx !== undefined) {
 
       const result = outputs[resultIdx];
+      guess = resultIdx;
 
       if (result && Array.isArray(result)) {
 
@@ -153,7 +193,7 @@ const setInputChunk = () => {
   inputData = [];
   imageData.data.forEach((val, idx) => {
     if (idx % 4 === 0) {
-      inputData.push(val > 100 ? 1 : 0);
+      inputData.push(val / 255);
     }
   });
   guessLikely();
