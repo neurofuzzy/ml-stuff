@@ -4,7 +4,7 @@
  * @returns {number}
  */
 function integer(character) {
-  if (character === '#') return 255;
+  if (character === '#') return 1;
   return 0;
 }
 
