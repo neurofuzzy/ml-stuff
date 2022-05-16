@@ -706,6 +706,67 @@ const verticalNoneToDouble = pixelChunk(
   '.#...#.'
 );
 
+const topRightCornerDoubleRound = pixelChunk(
+  '.......' +
+  '.....##' +
+  '...##..' +
+  '..#....' +
+  '..#....' +
+  '.#....#' +
+  '.#...#.'
+);
+
+const topLeftCornerDoubleRound = pixelChunk(
+  '.......' +
+  '##.....' +
+  '..##...' +
+  '....#..' +
+  '....#..' +
+  '#....#.' +
+  '.#...#.'
+);
+
+const bottomRightCornerDoubleRound = pixelChunk(
+  '.#...#.' +
+  '#....#.' +
+  '....#..' +
+  '....#..' +
+  '..##...' +
+  '##.....' +
+  '.......'
+);
+
+const bottomLeftCornerDoubleRound = pixelChunk(
+  '.#...#.' +
+  '.#....#' +
+  '..#....' +
+  '..#....' +
+  '...##..' +
+  '.....##' +
+  '.......'
+);
+
+const square = pixelChunk(
+  '.......' +
+  '.#####.' +
+  '.#...#.' +
+  '.#...#.' +
+  '.#...#.' +
+  '.#####.' +
+  '.......'
+);
+
+const circle = pixelChunk(
+  '.......' +
+  '..###..' +
+  '.#...#.' +
+  '.#...#.' +
+  '.#...#.' +
+  '..###..' +
+  '.......'
+);
+
+
 
 const outputs = [
   blank,
@@ -776,7 +837,13 @@ const outputs = [
   horizontalDoubleToNone,
   horizontalNoneToDouble,
   verticalDoubleToNone,
-  verticalNoneToDouble
+  verticalNoneToDouble,
+  topRightCornerDoubleRound,
+  topLeftCornerDoubleRound,
+  bottomRightCornerDoubleRound,
+  bottomLeftCornerDoubleRound,
+  square,
+  circle,
 ];
 
 module.exports = {

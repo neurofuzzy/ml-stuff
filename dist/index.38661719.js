@@ -27267,6 +27267,12 @@ const horizontalDoubleToNone = pixelChunk(".......####......#......#......#...##
 const horizontalNoneToDouble = pixelChunk("..........####...#......#......#......####.......");
 const verticalDoubleToNone = pixelChunk(".#...#..#...#..#...#." + `.#####.` + '.......' + '.......' + '.......');
 const verticalNoneToDouble = pixelChunk("....................." + `.#####.` + '.#...#.' + '.#...#.' + '.#...#.');
+const topRightCornerDoubleRound = pixelChunk("............##...##....#......#.....#....#.#...#.");
+const topLeftCornerDoubleRound = pixelChunk(".......##.......##.......#......#..#....#..#...#.");
+const bottomRightCornerDoubleRound = pixelChunk(".#...#.#....#.....#......#....##...##............");
+const bottomLeftCornerDoubleRound = pixelChunk(".#...#..#....#..#......#.......##.......##.......");
+const square = pixelChunk("........#####..#...#..#...#..#...#..#####........");
+const circle = pixelChunk(".........###...#...#..#...#..#...#...###.........");
 const outputs = [
     blank,
     horizontalLine,
@@ -27336,7 +27342,13 @@ const outputs = [
     horizontalDoubleToNone,
     horizontalNoneToDouble,
     verticalDoubleToNone,
-    verticalNoneToDouble
+    verticalNoneToDouble,
+    topRightCornerDoubleRound,
+    topLeftCornerDoubleRound,
+    bottomRightCornerDoubleRound,
+    bottomLeftCornerDoubleRound,
+    square,
+    circle, 
 ];
 module.exports = {
     pixelChunk,
