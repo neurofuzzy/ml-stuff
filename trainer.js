@@ -107,16 +107,16 @@ const addOutputs = () => {
 
       /** @type {HTMLCanvasElement} */
       /* @ts-ignore */
-      var sourceCanvas = document.getElementById("edge_scaled_image");
+      var sourceCanvas = document.getElementById("edge_result_image");
       var ctx = sourceCanvas.getContext('2d');
       ctx.drawImage(outputCanvas, left, top);
 
       left += 3;
-      if (left >= 63) {
+      if (left >= 30) {
         left = 0;
         top += 3;
       }
-      if (top >= 63) {
+      if (top >= 30) {
         top = 0;
         left = 0;
       }
@@ -187,9 +187,10 @@ const setInputChunk = () => {
   var targetCanvas = document.getElementById("training_image");
 
   var ctx = targetCanvas.getContext('2d');
-
-  ctx.drawImage(sourceCanvas, left, top, 3, 3, 0, 0, 3, 3);
-  const imageData = ctx.getImageData(0, 0, 3, 3);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, 9, 9);
+  ctx.drawImage(sourceCanvas, left - 3, top - 3, 9, 9, 0, 0, 9, 9);
+  const imageData = ctx.getImageData(0, 0, 9, 9);
   inputData = [];
   imageData.data.forEach((val, idx) => {
     if (idx % 4 === 0) {

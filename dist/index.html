@@ -46,10 +46,23 @@
       border: 1px solid gray;
     }
 
-    canvas#edge_scaled_image {
+    canvas#edge_scaled_image,
+    canvas#edge_result_image {
       image-rendering: pixelated;
       transform: scale(2, 2) translateX(16px) translateY(-16px);
       border: 2px solid gray;
+    }
+    div.current_chunk {
+      position:relative;
+    }
+    #mask {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      width: 24px;
+      height: 24px;
+      border: 24px solid #09f;
+      opacity: 0.5;
     }
   
 </style>
@@ -61,10 +74,13 @@
     <canvas id="blur_image" width="60" height="60"></canvas>
     <canvas id="edge_image" width="60" height="60"></canvas>
     <canvas id="edge_scaled_image" width="30" height="30"></canvas>
+    <canvas id="edge_result_image" width="30" height="30"></canvas>
+   
   </div>
   <div id="training">
     <div class="chunk current_chunk">
-      <canvas id="training_image" class="chunk" width="3" height="3"></canvas>
+      <canvas id="training_image" class="chunk" width="9" height="9"></canvas>
+      <div id="mask"></div>
       <br>
       <br>
       <br>
