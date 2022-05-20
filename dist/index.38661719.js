@@ -26911,9 +26911,9 @@ const applyMedianFilter = function(sourceId, targetId, scale) {
     workContext.putImageData(imageData, 0, 0);
 };
 const copyScaled = function(sourceId, targetId, scale) {
-    var width = 256;
-    var height = 256;
     /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById(sourceId);
+    var width = sourceCanvas.width;
+    var height = sourceCanvas.height;
     /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById(targetId);
     var ctx = targetCanvas.getContext('2d');
     ctx.drawImage(sourceCanvas, 0, 0, width, height, 0, 0, width * scale, height * scale);
@@ -27015,7 +27015,7 @@ const addFileReader = function(elem, listener) {
                     if (fromDataURL(event.target.result)) {
                         applyMedianFilter("input_image", "input_image");
                         //applyMedianFilter("input_image", "input_image");
-                        copyScaled("input_image", "blur_image", 0.5);
+                        copyScaled("input_image", "blur_image", 0.234375);
                         processImage("blur_image", "edge_image");
                         copyScaled("edge_image", "edge_scaled_image", 0.5);
                         listener();
@@ -27044,12 +27044,12 @@ window['_trainingData'] = d ? JSON.parse(d) : [];
 let inputData;
 document.getElementById("skip").onclick = ()=>{
     console.log("skipped");
-    left += 7;
-    if (left >= 63) {
+    left += 3;
+    if (left >= 30) {
         left = 0;
-        top += 7;
+        top += 3;
     }
-    if (top >= 63) {
+    if (top >= 30) {
         top = 0;
         left = 0;
     }
@@ -27066,12 +27066,12 @@ document.getElementById("accept").onclick = ()=>{
     /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById("edge_scaled_image");
     var ctx = sourceCanvas.getContext('2d');
     ctx.drawImage(outputCanvas, left, top);
-    left += 7;
-    if (left >= 63) {
+    left += 3;
+    if (left >= 30) {
         left = 0;
-        top += 7;
+        top += 3;
     }
-    if (top >= 63) {
+    if (top >= 30) {
         top = 0;
         left = 0;
     }
@@ -27084,20 +27084,20 @@ const addOutputs = ()=>{
         const outputElement = document.createElement("div");
         outputElement.className = "chunk output_chunk";
         const outputCanvas = document.createElement("canvas");
-        outputCanvas.width = 7;
-        outputCanvas.height = 7;
+        outputCanvas.width = 3;
+        outputCanvas.height = 3;
         outputCanvas.id = "output" + idx;
         outputCanvas.className = "chunk";
         outputElement.dataset.id = `${idx}`;
         outputElement.appendChild(outputCanvas);
-        const imgArray = new Uint8ClampedArray(196);
+        const imgArray = new Uint8ClampedArray(36);
         output.forEach((val, idx)=>{
             imgArray[idx * 4 + 0] = val * 255;
             imgArray[idx * 4 + 1] = val * 255;
             imgArray[idx * 4 + 2] = val * 255;
             imgArray[idx * 4 + 3] = 255;
         });
-        const imageData = new ImageData(7, 7);
+        const imageData = new ImageData(3, 3);
         imageData.data.set(imgArray);
         const ctx1 = outputCanvas.getContext('2d');
         ctx1.putImageData(imageData, 0, 0);
@@ -27116,10 +27116,10 @@ const addOutputs = ()=>{
             /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById("edge_scaled_image");
             var ctx = sourceCanvas.getContext('2d');
             ctx.drawImage(outputCanvas, left, top);
-            left += 7;
+            left += 3;
             if (left >= 63) {
                 left = 0;
-                top += 7;
+                top += 3;
             }
             if (top >= 63) {
                 top = 0;
@@ -27144,14 +27144,14 @@ const guessLikely = function() {
             const result = outputs[resultIdx];
             guess = resultIdx;
             if (result && Array.isArray(result)) {
-                const imgArray = new Uint8ClampedArray(196);
+                const imgArray = new Uint8ClampedArray(36);
                 result.forEach((val, idx)=>{
                     imgArray[idx * 4 + 0] = val * 255;
                     imgArray[idx * 4 + 1] = val * 255;
                     imgArray[idx * 4 + 2] = val * 255;
                     imgArray[idx * 4 + 3] = 255;
                 });
-                const imageData = new ImageData(7, 7);
+                const imageData = new ImageData(3, 3);
                 imageData.data.set(imgArray);
                 /** @type {HTMLCanvasElement} */ /* @ts-ignore */ const likelyCanvas = document.getElementById("likely_image");
                 const ctx = likelyCanvas.getContext('2d');
@@ -27164,8 +27164,8 @@ const setInputChunk = ()=>{
     /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var sourceCanvas = document.getElementById("edge_scaled_image");
     /** @type {HTMLCanvasElement} */ /* @ts-ignore */ var targetCanvas = document.getElementById("training_image");
     var ctx = targetCanvas.getContext('2d');
-    ctx.drawImage(sourceCanvas, left, top, 7, 7, 0, 0, 7, 7);
-    const imageData = ctx.getImageData(0, 0, 7, 7);
+    ctx.drawImage(sourceCanvas, left, top, 3, 3, 0, 0, 3, 3);
+    const imageData = ctx.getImageData(0, 0, 3, 3);
     inputData = [];
     imageData.data.forEach((val, idx)=>{
         if (idx % 4 === 0) inputData.push(val / 255);
@@ -27198,86 +27198,43 @@ module.exports = {
  */ function pixelChunk(string) {
     return string.trim().split('').map(integer);
 }
-const blank = pixelChunk(".................................................");
-const horizontalLine = pixelChunk(".....................#######.....................");
-const cross = pixelChunk("...#......#......#...#######...#......#......#...");
-const verticalLine = pixelChunk("...#......#......#......#......#......#......#...");
-const topRightCorner = pixelChunk(".....................####......#......#......#...");
-const topLeftCorner = pixelChunk("........................####...#......#......#...");
-const bottomRightCorner = pixelChunk("...#......#......#...####........................");
-const bottomLeftCorner = pixelChunk("...#......#......#......####.....................");
-const topT = pixelChunk(".....................#######...#......#......#...");
-const bottomT = pixelChunk("...#......#......#...#######.....................");
-const leftT = pixelChunk("...#......#......#......####...#......#......#...");
-const rightT = pixelChunk("...#......#......#...####......#......#......#...");
-const topRightRoundedCorner = pixelChunk(".....................##.......#.......#......#...");
-const topLeftRoundedCorner = pixelChunk("..........................##....#.....#......#...");
-const bottomRightRoundedCorner = pixelChunk("...#......#.....#....##..........................");
-const bottomLeftRoundedCorner = pixelChunk("...#......#.......#.......##.....................");
-const forwardRoundedCorners = pixelChunk("...#......#.......#..##...##..#.......#......#...");
-const backwardRoundedCorners = pixelChunk("...#......#.....#....##...##....#.....#......#...");
-const topY = pixelChunk(".....................##...##..#.#.....#......#...");
-const bottomY = pixelChunk("...#......#.....#.#..##...##.....................");
-const leftY = pixelChunk("...#......#.......#.......##....#.....#......#...");
-const rightY = pixelChunk("...#......#.....#....##.......#.......#......#...");
-const horizontalLineDouble = pixelChunk(".......#######.....................#######.......");
-const crossDouble = pixelChunk(".#...#.##...##.....................##...##.#...#.");
-const verticalLineDouble = pixelChunk(".#...#..#...#..#...#..#...#..#...#..#...#..#...#.");
-const topRightCornerDouble = pixelChunk("........######.#......#......#......#...##.#...#.");
-const topLeftCornerDouble = pixelChunk(".......######......#......#......#.##...#..#...#.");
-const bottomRightCornerDouble = pixelChunk(".#...#.##...#......#......#......#.######........");
-const bottomLeftCornerDouble = pixelChunk(".#...#..#...##.#......#......#......######.......");
-const topTDouble = pixelChunk(".......#######.....................##...##.#...#.");
-const bottomTDouble = pixelChunk(".#...#.##...##.....................#######.......");
-const leftTDouble = pixelChunk(".#...#..#...##.#......#......#......#...##.#...#.");
-const rightTDouble = pixelChunk(".#...#.##...#......#......#......#.##...#..#...#.");
-const topTDoubleSingle = pixelChunk(".......#######.....................#######...#...");
-const bottomTDoubleSingle = pixelChunk("...#...#######.....................#######.......");
-const leftTDoubleSingle = pixelChunk(".#...#..#...#..#...#..#...##.#...#..#...#..#...#.");
-const rightTDoubleSingle = pixelChunk(".#...#..#...#..#...#.##...#..#...#..#...#..#...#.");
-const topTSingleDouble = pixelChunk(".....................#######.#...#..#...#..#...#.");
-const bottomTSingleDouble = pixelChunk(".#...#..#...#..#...#.#######.....................");
-const leftTSingleDouble = pixelChunk("...#......####...#......#......#......####...#...");
-const rightTSingleDouble = pixelChunk("...#...####......#......#......#...####......#...");
-const topTSingleDoubleCross = pixelChunk("...#......#......#...#######.#...#..#...#..#...#.");
-const bottomTSingleDoubleCross = pixelChunk(".#...#..#...#..#...#.#######...#......#......#...");
-const leftTSingleDoubleCross = pixelChunk("...#......####...#...####......#......####...#...");
-const rightTSingleDoubleCross = pixelChunk("...#...####......#......####...#...####......#...");
-const crossHDoubleSingle = pixelChunk("...#...#######.....................#######...#...");
-const crossVDoubleSingle = pixelChunk(".#...#..#...#..#...#.##...##.#...#..#...#..#...#.");
-const crossHSingleDouble = pixelChunk(".#...#..#...#..#...#.#######.#...#..#...#..#...#.");
-const crossVSingleDouble = pixelChunk("...#...#######...#......#......#...#######...#...");
-const topRightCornerDoubleSingle = pixelChunk("...#....######.#.....##......#......#...##.#...#.");
-const topLeftCornerDoubleSingle = pixelChunk("...#...######......#......##.....#.##...#..#...#.");
-const bottomRightCornerDoubleSingle = pixelChunk(".#...#.##...#......#......##.....#.######....#...");
-const bottomLeftCornerDoubleSingle = pixelChunk(".#...#..#...##.#.....##......#......######...#...");
-const topRightCornerDoubleSingleH = pixelChunk("........######.#.....##......#......#...##.#...#.");
-const topLeftCornerDoubleSingleH = pixelChunk(".......######......#......##.....#.##...#..#...#.");
-const bottomRightCornerDoubleSingleH = pixelChunk(".#...#.##...#......#......##.....#.######........");
-const bottomLeftCornerDoubleSingleH = pixelChunk(".#...#..#...##.#.....##......#......######.......");
-const topRightCornerDoubleSingleV = pixelChunk("...#....######.#......#......#......#...##.#...#.");
-const topLeftCornerDoubleSingleV = pixelChunk("...#...######......#......#......#.##...#..#...#.");
-const bottomRightCornerDoubleSingleV = pixelChunk(".#...#.##...#......#......#......#.######....#...");
-const bottomLeftCornerDoubleSingleV = pixelChunk(".#...#..#...##.#......#......#......######...#...");
-const horizontalDoubleToSingle = pixelChunk(".......####......#......####...#...####..........");
-const horizontalSingleToDouble = pixelChunk("..........####...#...####......#......####.......");
-const verticalDoubleToSingle = pixelChunk(".#...#..#...#..#...#." + `.#####.` + '...#...' + '...#...' + '...#...');
-const verticalSingleToDouble = pixelChunk("...#......#......#..." + `.#####.` + '.#...#.' + '.#...#.' + '.#...#.');
-const horizontalDoubleToNone = pixelChunk(".......####......#......#......#...####..........");
-const horizontalNoneToDouble = pixelChunk("..........####...#......#......#......####.......");
-const verticalDoubleToNone = pixelChunk(".#...#..#...#..#...#." + `.#####.` + '.......' + '.......' + '.......');
-const verticalNoneToDouble = pixelChunk("....................." + `.#####.` + '.#...#.' + '.#...#.' + '.#...#.');
-const topRightCornerDoubleRound = pixelChunk("............##...##....#......#.....#....#.#...#.");
-const topLeftCornerDoubleRound = pixelChunk(".......##.......##.......#......#..#....#..#...#.");
-const bottomRightCornerDoubleRound = pixelChunk(".#...#.#....#.....#......#....##...##............");
-const bottomLeftCornerDoubleRound = pixelChunk(".#...#..#....#..#......#.......##.......##.......");
-const square = pixelChunk("........#####..#...#..#...#..#...#..#####........");
-const circle = pixelChunk(".........###...#...#..#...#..#...#...###.........");
+const blank = pixelChunk(".........");
+const horizontalLine = pixelChunk("...###...");
+const verticalLine = pixelChunk(".#..#..#.");
+const cross = pixelChunk(".#.###.#.");
+const topRightCorner = pixelChunk("...##..#.");
+const topLeftCorner = pixelChunk("....##.#.");
+const bottomRightCorner = pixelChunk(".#.##....");
+const bottomLeftCorner = pixelChunk(".#..##...");
+const topT = pixelChunk("...###.#.");
+const bottomT = pixelChunk(".#.###...");
+const leftT = pixelChunk(".#..##.#.");
+const rightT = pixelChunk(".#.##..#.");
+const topRightRoundedCorner = pixelChunk("...#...#.");
+const topLeftRoundedCorner = pixelChunk(".....#.#.");
+const bottomRightRoundedCorner = pixelChunk(".#.#.....");
+const bottomLeftRoundedCorner = pixelChunk(".#...#...");
+const endTop = pixelChunk("....#..#.");
+const endBottom = pixelChunk(".#..#....");
+const endLeft = pixelChunk("....##...");
+const endRight = pixelChunk("...##....");
+const circle = pixelChunk(".#.#.#.#.");
+const square = pixelChunk("####.####");
+const diagonalRight = pixelChunk("..#.#.#..");
+const diagonalLeft = pixelChunk("#...#...#");
+const horizontalCurveUp = pixelChunk("..###....");
+const horizontalCurveDown = pixelChunk("...##...#");
+const curveDownHorizontal = pixelChunk("#...##...");
+const curveUpHorizontal = pixelChunk("....###..");
+const verticalCurveLeft = pixelChunk(".#..#.#..");
+const verticalCurveRight = pixelChunk(".#..#...#");
+const curveLeftVertical = pixelChunk("#...#..#.");
+const curveRightVertical = pixelChunk("..#.#..#.");
 const outputs = [
     blank,
     horizontalLine,
-    cross,
     verticalLine,
+    cross,
     topRightCorner,
     topLeftCorner,
     bottomRightCorner,
@@ -27290,65 +27247,22 @@ const outputs = [
     topLeftRoundedCorner,
     bottomRightRoundedCorner,
     bottomLeftRoundedCorner,
-    forwardRoundedCorners,
-    backwardRoundedCorners,
-    topY,
-    bottomY,
-    leftY,
-    rightY,
-    horizontalLineDouble,
-    crossDouble,
-    verticalLineDouble,
-    topRightCornerDouble,
-    topLeftCornerDouble,
-    bottomRightCornerDouble,
-    bottomLeftCornerDouble,
-    topTDouble,
-    bottomTDouble,
-    leftTDouble,
-    rightTDouble,
-    topTDoubleSingle,
-    bottomTDoubleSingle,
-    leftTDoubleSingle,
-    rightTDoubleSingle,
-    topTSingleDouble,
-    bottomTSingleDouble,
-    leftTSingleDouble,
-    rightTSingleDouble,
-    topTSingleDoubleCross,
-    bottomTSingleDoubleCross,
-    leftTSingleDoubleCross,
-    rightTSingleDoubleCross,
-    crossHDoubleSingle,
-    crossVDoubleSingle,
-    crossHSingleDouble,
-    crossVSingleDouble,
-    topRightCornerDoubleSingle,
-    topLeftCornerDoubleSingle,
-    bottomRightCornerDoubleSingle,
-    bottomLeftCornerDoubleSingle,
-    topRightCornerDoubleSingleH,
-    topLeftCornerDoubleSingleH,
-    bottomRightCornerDoubleSingleH,
-    bottomLeftCornerDoubleSingleH,
-    topRightCornerDoubleSingleV,
-    topLeftCornerDoubleSingleV,
-    bottomRightCornerDoubleSingleV,
-    bottomLeftCornerDoubleSingleV,
-    horizontalDoubleToSingle,
-    horizontalSingleToDouble,
-    verticalDoubleToSingle,
-    verticalSingleToDouble,
-    horizontalDoubleToNone,
-    horizontalNoneToDouble,
-    verticalDoubleToNone,
-    verticalNoneToDouble,
-    topRightCornerDoubleRound,
-    topLeftCornerDoubleRound,
-    bottomRightCornerDoubleRound,
-    bottomLeftCornerDoubleRound,
+    endTop,
+    endBottom,
+    endLeft,
+    endRight,
+    circle,
     square,
-    circle, 
+    diagonalRight,
+    diagonalLeft,
+    horizontalCurveUp,
+    horizontalCurveDown,
+    curveDownHorizontal,
+    curveUpHorizontal,
+    verticalCurveLeft,
+    verticalCurveRight,
+    curveLeftVertical,
+    curveRightVertical, 
 ];
 module.exports = {
     pixelChunk,

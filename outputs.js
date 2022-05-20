@@ -18,761 +18,207 @@ function pixelChunk(string) {
 }
 
 const blank = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '.......'
+  '...' +
+  '...' +
+  '...'
 );
 
 const horizontalLine = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......'
-);
-
-const cross = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '#######' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '###' +
+  '...' 
 );
 
 const verticalLine = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '.#.' +
+  '.#.' +
+  '.#.' 
+);
+
+const cross = pixelChunk(
+  '.#.' +
+  '###' +
+  '.#.' 
 );
 
 const topRightCorner = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '####...' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '##.' +
+  '.#.' 
 );
 
 const topLeftCorner = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '...####' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '.##' +
+  '.#.'
 );
 
 const bottomRightCorner = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '####...' +
-  '.......' +
-  '.......' +
-  '.......'
+  '.#.' +
+  '##.' +
+  '...' 
 );
 
 const bottomLeftCorner = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...####' +
-  '.......' +
-  '.......' +
-  '.......'
+  '.#.' +
+  '.##' +
+  '...' 
 );
 
 const topT = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '###' +
+  '.#.' 
 );
 
 const bottomT = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......'
+  '.#.' +
+  '###' +
+  '...'
 );
 
 const leftT = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...####' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '.#.' +
+  '.##' +
+  '.#.' 
 );
 
 const rightT = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '####...' +
-  '...#...' +
-  '...#...' +
-  '...#...'
+  '.#.' +
+  '##.' +
+  '.#.' 
 );
 
 const topRightRoundedCorner = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '##.....' +
-  '..#....' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '#..' +
+  '.#.'
 );
 
 const topLeftRoundedCorner = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '.....##' +
-  '....#..' +
-  '...#...' +
-  '...#...'
+  '...' +
+  '..#' +
+  '.#.'
 );
 
 const bottomRightRoundedCorner = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '..#....' +
-  '##.....' +
-  '.......' +
-  '.......' +
-  '.......'
+  '.#.' +
+  '#..' +
+  '...' 
 );
 
 const bottomLeftRoundedCorner = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '....#..' +
-  '.....##' +
-  '.......' +
-  '.......' +
-  '.......'
+  '.#.' +
+  '..#' +
+  '...'
 );
 
-const forwardRoundedCorners = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '....#..' +
-  '##...##' +
-  '..#....' +
-  '...#...' +
-  '...#...'
+const endTop = pixelChunk(
+  '...' +
+  '.#.' +
+  '.#.'
 );
 
-const backwardRoundedCorners = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '..#....' +
-  '##...##' +
-  '....#..' +
-  '...#...' +
-  '...#...'
+const endBottom = pixelChunk(
+  '.#.' +
+  '.#.' +
+  '...'
 );
 
-const topY = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '##...##' +
-  '..#.#..' +
-  '...#...' +
-  '...#...'
+const endLeft = pixelChunk(
+  '...' +
+  '.##' +
+  '...'
 );
 
-const bottomY = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '..#.#..' +
-  '##...##' +
-  '.......' +
-  '.......' +
-  '.......'
-);
-
-const leftY = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '....#..' +
-  '.....##' +
-  '....#..' +
-  '...#...' +
-  '...#...'
-);
-
-const rightY = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '..#....' +
-  '##.....' +
-  '..#....' +
-  '...#...' +
-  '...#...'
-);
-
-const horizontalLineDouble = pixelChunk(
-  '.......' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '.......'
-);
-
-const crossDouble = pixelChunk(
-  '.#...#.' +
-  '##...##' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '##...##' +
-  '.#...#.'
-);
-
-const verticalLineDouble = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const topRightCornerDouble = pixelChunk(
-  '.......' +
-  '.######' +
-  '.#.....' +
-  '.#.....' +
-  '.#.....' +
-  '.#...##' +
-  '.#...#.'
-);
-
-const topLeftCornerDouble = pixelChunk(
-  '.......' +
-  '######.' +
-  '.....#.' +
-  '.....#.' +
-  '.....#.' +
-  '##...#.' +
-  '.#...#.'
-);
-
-const bottomRightCornerDouble = pixelChunk(
-  '.#...#.' +
-  '##...#.' +
-  '.....#.' +
-  '.....#.' +
-  '.....#.' +
-  '######.' +
-  '.......'
-);
-
-const bottomLeftCornerDouble = pixelChunk(
-  '.#...#.' +
-  '.#...##' +
-  '.#.....' +
-  '.#.....' +
-  '.#.....' +
-  '.######' +
-  '.......'
-);
-
-const topTDouble = pixelChunk(
-  '.......' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '##...##' +
-  '.#...#.'
-);
-
-const bottomTDouble = pixelChunk(
-  '.#...#.' +
-  '##...##' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '.......'
-);
-
-const leftTDouble = pixelChunk(
-  '.#...#.' +
-  '.#...##' +
-  '.#.....' +
-  '.#.....' +
-  '.#.....' +
-  '.#...##' +
-  '.#...#.'
-);
-
-const rightTDouble = pixelChunk(
-  '.#...#.' +
-  '##...#.' +
-  '.....#.' +
-  '.....#.' +
-  '.....#.' +
-  '##...#.' +
-  '.#...#.'
-);
-
-const topTDoubleSingle = pixelChunk(
-  '.......' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '...#...'
-);
-
-const bottomTDoubleSingle = pixelChunk(
-  '...#...' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '.......'
-);
-
-const leftTDoubleSingle = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...##' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const rightTDoubleSingle = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '##...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const topTSingleDouble = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' 
-);
-
-const bottomTSingleDouble = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......'
-);
-
-const leftTSingleDouble = pixelChunk(
-  '...#...' +
-  '...####' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...####' +
-  '...#...'
-);
-
-const rightTSingleDouble = pixelChunk(
-  '...#...' +
-  '####...' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '####...' +
-  '...#...'
-);
-const topTSingleDoubleCross = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '#######' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' 
-);
-
-const bottomTSingleDoubleCross = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '#######' +
-  '...#...' +
-  '...#...' +
-  '...#...'
-);
-
-const leftTSingleDoubleCross = pixelChunk(
-  '...#...' +
-  '...####' +
-  '...#...' +
-  '####...' +
-  '...#...' +
-  '...####' +
-  '...#...'
-);
-
-const rightTSingleDoubleCross = pixelChunk(
-  '...#...' +
-  '####...' +
-  '...#...' +
-  '...####' +
-  '...#...' +
-  '####...' +
-  '...#...'
-);
-
-const crossHDoubleSingle = pixelChunk(
-  '...#...' +
-  '#######' +
-  '.......' +
-  '.......' +
-  '.......' +
-  '#######' +
-  '...#...'
-);
-
-const crossVDoubleSingle = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '##...##' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const crossHSingleDouble = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '#######' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const crossVSingleDouble = pixelChunk(
-  '...#...' +
-  '#######' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '#######' +
-  '...#...'
-);
-
-const topRightCornerDoubleSingle = pixelChunk(
-  '...#...' +
-  '.######' +
-  '.#.....' +
-  '##.....' +
-  '.#.....' +
-  '.#...##' +
-  '.#...#.'
-);
-
-const topLeftCornerDoubleSingle = pixelChunk(
-  '...#...' +
-  '######.' +
-  '.....#.' +
-  '.....##' +
-  '.....#.' +
-  '##...#.' +
-  '.#...#.'
-);
-
-const bottomRightCornerDoubleSingle = pixelChunk(
-  '.#...#.' +
-  '##...#.' +
-  '.....#.' +
-  '.....##' +
-  '.....#.' +
-  '######.' +
-  '...#...'
-);
-
-const bottomLeftCornerDoubleSingle = pixelChunk(
-  '.#...#.' +
-  '.#...##' +
-  '.#.....' +
-  '##.....' +
-  '.#.....' +
-  '.######' +
-  '...#...'
-);
-
-const topRightCornerDoubleSingleH = pixelChunk(
-  '.......' +
-  '.######' +
-  '.#.....' +
-  '##.....' +
-  '.#.....' +
-  '.#...##' +
-  '.#...#.'
-);
-
-const topLeftCornerDoubleSingleH = pixelChunk(
-  '.......' +
-  '######.' +
-  '.....#.' +
-  '.....##' +
-  '.....#.' +
-  '##...#.' +
-  '.#...#.'
-);
-
-const bottomRightCornerDoubleSingleH = pixelChunk(
-  '.#...#.' +
-  '##...#.' +
-  '.....#.' +
-  '.....##' +
-  '.....#.' +
-  '######.' +
-  '.......'
-);
-
-const bottomLeftCornerDoubleSingleH = pixelChunk(
-  '.#...#.' +
-  '.#...##' +
-  '.#.....' +
-  '##.....' +
-  '.#.....' +
-  '.######' +
-  '.......'
-);
-
-const topRightCornerDoubleSingleV = pixelChunk(
-  '...#...' +
-  '.######' +
-  '.#.....' +
-  '.#.....' +
-  '.#.....' +
-  '.#...##' +
-  '.#...#.'
-);
-
-const topLeftCornerDoubleSingleV = pixelChunk(
-  '...#...' +
-  '######.' +
-  '.....#.' +
-  '.....#.' +
-  '.....#.' +
-  '##...#.' +
-  '.#...#.'
-);
-
-const bottomRightCornerDoubleSingleV = pixelChunk(
-  '.#...#.' +
-  '##...#.' +
-  '.....#.' +
-  '.....#.' +
-  '.....#.' +
-  '######.' +
-  '...#...'
-);
-
-const bottomLeftCornerDoubleSingleV = pixelChunk(
-  '.#...#.' +
-  '.#...##' +
-  '.#.....' +
-  '.#.....' +
-  '.#.....' +
-  '.######' +
-  '...#...'
-);
-
-const horizontalDoubleToSingle = pixelChunk(
-  '.......' +
-  '####...' +
-  '...#...' +
-  '...####' +
-  '...#...' +
-  '####...' +
-  '.......'
-);
-
-const horizontalSingleToDouble = pixelChunk(
-  '.......' +
-  '...####' +
-  '...#...' +
-  '####...' +
-  '...#...' +
-  '...####' +
-  '.......'
-);
-
-const verticalDoubleToSingle = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  `.#####.` +
-  '...#...' +
-  '...#...' +
-  '...#...'
-);
-
-const verticalSingleToDouble = pixelChunk(
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  `.#####.` +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const horizontalDoubleToNone= pixelChunk(
-  '.......' +
-  '####...' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '####...' +
-  '.......'
-);
-
-const horizontalNoneToDouble = pixelChunk(
-  '.......' +
-  '...####' +
-  '...#...' +
-  '...#...' +
-  '...#...' +
-  '...####' +
-  '.......'
-);
-
-const verticalDoubleToNone = pixelChunk(
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  `.#####.` +
-  '.......' +
-  '.......' +
-  '.......'
-);
-
-const verticalNoneToDouble = pixelChunk(
-  '.......' +
-  '.......' +
-  '.......' +
-  `.#####.` +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.'
-);
-
-const topRightCornerDoubleRound = pixelChunk(
-  '.......' +
-  '.....##' +
-  '...##..' +
-  '..#....' +
-  '..#....' +
-  '.#....#' +
-  '.#...#.'
-);
-
-const topLeftCornerDoubleRound = pixelChunk(
-  '.......' +
-  '##.....' +
-  '..##...' +
-  '....#..' +
-  '....#..' +
-  '#....#.' +
-  '.#...#.'
-);
-
-const bottomRightCornerDoubleRound = pixelChunk(
-  '.#...#.' +
-  '#....#.' +
-  '....#..' +
-  '....#..' +
-  '..##...' +
-  '##.....' +
-  '.......'
-);
-
-const bottomLeftCornerDoubleRound = pixelChunk(
-  '.#...#.' +
-  '.#....#' +
-  '..#....' +
-  '..#....' +
-  '...##..' +
-  '.....##' +
-  '.......'
-);
-
-const square = pixelChunk(
-  '.......' +
-  '.#####.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#####.' +
-  '.......'
+const endRight = pixelChunk(
+  '...' +
+  '##.' +
+  '...'
 );
 
 const circle = pixelChunk(
-  '.......' +
-  '..###..' +
-  '.#...#.' +
-  '.#...#.' +
-  '.#...#.' +
-  '..###..' +
-  '.......'
+  '.#.' +
+  '#.#' +
+  '.#.'
 );
+
+const square = pixelChunk(
+  '###' +
+  '#.#' +
+  '###'
+);
+
+const diagonalRight = pixelChunk(
+  '..#' +
+  '.#.' +
+  '#..'
+);
+
+const diagonalLeft = pixelChunk(
+  '#..' +
+  '.#.' +
+  '..#'   
+);
+
+const horizontalCurveUp = pixelChunk(
+  '..#' +
+  '##.' +
+  '...'
+);
+
+const horizontalCurveDown = pixelChunk(
+  '...' +
+  '##.' +
+  '..#'
+);
+
+const curveDownHorizontal = pixelChunk(
+  '#..' +
+  '.##' +
+  '...'
+);
+
+const curveUpHorizontal = pixelChunk(
+  '...' +
+  '.##' +
+  '#..'
+);
+
+const verticalCurveLeft = pixelChunk(
+  '.#.' +
+  '.#.' +
+  '#..'
+);
+
+const verticalCurveRight = pixelChunk(
+  '.#.' +
+  '.#.' +
+  '..#'
+);
+
+const curveLeftVertical = pixelChunk(
+  '#..' +
+  '.#.' +
+  '.#.'
+);
+
+const curveRightVertical = pixelChunk(
+  '..#' +
+  '.#.' +
+  '.#.'
+);
+
+
+
 
 
 
 const outputs = [
   blank,
   horizontalLine,
-  cross,
   verticalLine,
+  cross,
   topRightCorner,
   topLeftCorner,
   bottomRightCorner,
@@ -785,65 +231,22 @@ const outputs = [
   topLeftRoundedCorner,
   bottomRightRoundedCorner,
   bottomLeftRoundedCorner,
-  forwardRoundedCorners,
-  backwardRoundedCorners,
-  topY,
-  bottomY,
-  leftY,
-  rightY,
-  horizontalLineDouble,
-  crossDouble,
-  verticalLineDouble,
-  topRightCornerDouble,
-  topLeftCornerDouble,
-  bottomRightCornerDouble,
-  bottomLeftCornerDouble,
-  topTDouble,
-  bottomTDouble,
-  leftTDouble,
-  rightTDouble,
-  topTDoubleSingle,
-  bottomTDoubleSingle,
-  leftTDoubleSingle,
-  rightTDoubleSingle,
-  topTSingleDouble,
-  bottomTSingleDouble,
-  leftTSingleDouble,
-  rightTSingleDouble,
-  topTSingleDoubleCross,
-  bottomTSingleDoubleCross,
-  leftTSingleDoubleCross,
-  rightTSingleDoubleCross,
-  crossHDoubleSingle,
-  crossVDoubleSingle,
-  crossHSingleDouble,
-  crossVSingleDouble,
-  topRightCornerDoubleSingle,
-  topLeftCornerDoubleSingle,
-  bottomRightCornerDoubleSingle,
-  bottomLeftCornerDoubleSingle,
-  topRightCornerDoubleSingleH,
-  topLeftCornerDoubleSingleH,
-  bottomRightCornerDoubleSingleH,
-  bottomLeftCornerDoubleSingleH,
-  topRightCornerDoubleSingleV,
-  topLeftCornerDoubleSingleV,
-  bottomRightCornerDoubleSingleV,
-  bottomLeftCornerDoubleSingleV,
-  horizontalDoubleToSingle,
-  horizontalSingleToDouble,
-  verticalDoubleToSingle,
-  verticalSingleToDouble,
-  horizontalDoubleToNone,
-  horizontalNoneToDouble,
-  verticalDoubleToNone,
-  verticalNoneToDouble,
-  topRightCornerDoubleRound,
-  topLeftCornerDoubleRound,
-  bottomRightCornerDoubleRound,
-  bottomLeftCornerDoubleRound,
-  square,
+  endTop,
+  endBottom,
+  endLeft,
+  endRight,
   circle,
+  square,
+  diagonalRight,
+  diagonalLeft,
+  horizontalCurveUp,
+  horizontalCurveDown,
+  curveDownHorizontal,
+  curveUpHorizontal,
+  verticalCurveLeft,
+  verticalCurveRight,
+  curveLeftVertical,
+  curveRightVertical,
 ];
 
 module.exports = {

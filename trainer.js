@@ -12,12 +12,12 @@ let inputData;
 
 document.getElementById("skip").onclick = () => {
   console.log("skipped");
-  left += 7;
-  if (left >= 63) {
+  left += 3;
+  if (left >= 30) {
     left = 0;
-    top += 7;
+    top += 3;
   }
-  if (top >= 63) {
+  if (top >= 30) {
     top = 0;
     left = 0;
   }
@@ -45,12 +45,12 @@ document.getElementById("accept").onclick = () => {
   var ctx = sourceCanvas.getContext('2d');
   ctx.drawImage(outputCanvas, left, top);
 
-  left += 7;
-  if (left >= 63) {
+  left += 3;
+  if (left >= 30) {
     left = 0;
-    top += 7;
+    top += 3;
   }
-  if (top >= 63) {
+  if (top >= 30) {
     top = 0;
     left = 0;
   }
@@ -69,14 +69,14 @@ const addOutputs = () => {
     const outputElement = document.createElement("div");
     outputElement.className = "chunk output_chunk";
     const outputCanvas = document.createElement("canvas");
-    outputCanvas.width = 7;
-    outputCanvas.height = 7;
+    outputCanvas.width = 3;
+    outputCanvas.height = 3;
     outputCanvas.id = "output" + idx;
     outputCanvas.className = "chunk";
     outputElement.dataset.id = `${idx}`;
     outputElement.appendChild(outputCanvas);
 
-    const imgArray = new Uint8ClampedArray(7 * 7 * 4);
+    const imgArray = new Uint8ClampedArray(3 * 3 * 4);
     output.forEach((val, idx) => {
       imgArray[idx * 4 + 0] = val * 255;
       imgArray[idx * 4 + 1] = val * 255;
@@ -84,7 +84,7 @@ const addOutputs = () => {
       imgArray[idx * 4 + 3] = 255
     });
 
-    const imageData = new ImageData(7, 7);
+    const imageData = new ImageData(3, 3);
     imageData.data.set(imgArray);
 
     const ctx = outputCanvas.getContext('2d');
@@ -111,10 +111,10 @@ const addOutputs = () => {
       var ctx = sourceCanvas.getContext('2d');
       ctx.drawImage(outputCanvas, left, top);
 
-      left += 7;
+      left += 3;
       if (left >= 63) {
         left = 0;
-        top += 7;
+        top += 3;
       }
       if (top >= 63) {
         top = 0;
@@ -153,7 +153,7 @@ const guessLikely = function () {
 
       if (result && Array.isArray(result)) {
 
-        const imgArray = new Uint8ClampedArray(7 * 7 * 4);
+        const imgArray = new Uint8ClampedArray(3 * 3 * 4);
         result.forEach((val, idx) => {
           imgArray[idx * 4 + 0] = val * 255;
           imgArray[idx * 4 + 1] = val * 255;
@@ -161,7 +161,7 @@ const guessLikely = function () {
           imgArray[idx * 4 + 3] = 255
         });
     
-        const imageData = new ImageData(7, 7);
+        const imageData = new ImageData(3, 3);
         imageData.data.set(imgArray);
         
         /** @type {HTMLCanvasElement} */
@@ -188,8 +188,8 @@ const setInputChunk = () => {
 
   var ctx = targetCanvas.getContext('2d');
 
-  ctx.drawImage(sourceCanvas, left, top, 7, 7, 0, 0, 7, 7);
-  const imageData = ctx.getImageData(0, 0, 7, 7);
+  ctx.drawImage(sourceCanvas, left, top, 3, 3, 0, 0, 3, 3);
+  const imageData = ctx.getImageData(0, 0, 3, 3);
   inputData = [];
   imageData.data.forEach((val, idx) => {
     if (idx % 4 === 0) {

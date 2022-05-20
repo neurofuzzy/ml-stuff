@@ -66,12 +66,11 @@ const applyMedianFilter = function(sourceId, targetId, scale) {
 
 const copyScaled = function(sourceId, targetId, scale) {
 
-  var width = 256;
-  var height = 256;
-
   /** @type {HTMLCanvasElement} */
   /* @ts-ignore */
   var sourceCanvas = document.getElementById(sourceId);
+  var width = sourceCanvas.width;
+  var height = sourceCanvas.height;
   /** @type {HTMLCanvasElement} */
   /* @ts-ignore */
   var targetCanvas = document.getElementById(targetId);
@@ -205,7 +204,7 @@ const addFileReader = function (elem, listener) {
           if (fromDataURL(event.target.result)) {
             applyMedianFilter("input_image", "input_image");
             //applyMedianFilter("input_image", "input_image");
-            copyScaled("input_image", "blur_image", 0.5);   
+            copyScaled("input_image", "blur_image", 60 / 256);   
             processImage("blur_image", "edge_image");
             copyScaled("edge_image", "edge_scaled_image", 0.5);
             listener();
